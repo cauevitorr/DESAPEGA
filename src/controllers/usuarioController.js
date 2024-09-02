@@ -1,4 +1,4 @@
-import conn from "../config/conn.js"
+import conn from "../config/conn.js" //conexão
 import bcrypt from "bcrypt"
 import { v4 as uuidv4 } from "uuid"
 import { response } from "express"

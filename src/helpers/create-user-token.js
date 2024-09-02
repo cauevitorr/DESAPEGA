@@ -1,4 +1,4 @@
-import jwt  from "jsonwebtoken"
+import jwt  from "jsonwebtoken" //importaçõa
 
 const createUserToken = async (usuario, request, response)=>{
  //Criar o token

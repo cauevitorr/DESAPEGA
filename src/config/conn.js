@@ -1,4 +1,4 @@
-import mysql from "mysql2"
+import mysql from "mysql2" //mysql
 
 const conn = mysql.createPool({
  connectionLimit: 10,

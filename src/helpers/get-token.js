@@ -1,5 +1,5 @@
 const getToken = (request)=>{
- //exrtair token
+ //extrair token
  const authHeader = request.headers.authorization
  //(baerer token)
  const token = authHeader.split(" ")[1]

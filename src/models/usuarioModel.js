@@ -1,4 +1,4 @@
-import conn from "../config/conn.js"                                                                                  
+import conn from "../config/conn.js" //conn                                                                          
 
 const tabelaUsuario = /*sql*/`
 CREATE TABLE IF NOT EXISTS usuarios(
