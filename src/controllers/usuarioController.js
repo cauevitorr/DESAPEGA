@@ -1,11 +1,11 @@
 import conn from "../config/conn.js" //conexão
 import bcrypt from "bcrypt"
 import { v4 as uuidv4 } from "uuid"
-import { response } from "express"
 import jwt from "jsonwebtoken"
 //helpers
 import createUserToken from "../helpers/create-user-token.js"
 import getToken from "../helpers/get-token.js"
+import getUserByToken from "../helpers/get-user-by-token.js"
 
 
 export const register = async (request, response) => {
@@ -184,9 +184,34 @@ export const checkUser = async (request, response) =>{
 }
 // getUserById -> Verificar usuário
 export const getUserById = async(request, response)=>{
+ const id = request.params.id
+ const checkSql = /*sql*/`SELECT usuario_id, nome, email, telefone, imagem FROM usuarios WHERE ?? = ?`
+ const checkSqlData = ["usuario_id", id]
+ conn.query(checkSql, checkSqlData, (err, data)=>{
+  if (err) {
+   console.error(err)
+   response.status(500).json({message:"Erro ao buscar usuário"})
+   return
+  }
+  if (data.length === 0) {
+   response.status(404).json({message:"Usuário não encontrado"})
+   return
+  }
+  const usuario = data[0]
+  response.status(200).json(usuario)
+ })
 
 }
 //editedUser -> controlador protegido, contem imagen
-export const editedUser = async (request, response)=>{
+export const editUser = async (request, response)=>{
+ const { id } = request.params
 
+ try {
+  const token = getToken(request)
+  const user = await getUserByToken(token)
+  console.log(user)
+
+ } catch (error) {
+  
+ }
 } 
