@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 import conn from "../config/conn.js"
 
 const getUserByToken = async (token) =>{
- return new Promisse((resolve, reject)=>{
+ return new Promise((resolve, reject)=>{
   if (!token) {
    response.status(401),json({message:"Acessoa negado"})
    return

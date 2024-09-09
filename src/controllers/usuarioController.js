@@ -182,6 +182,7 @@ export const checkUser = async (request, response) =>{
   response.status(200).json(usuarioAtual)
  }
 }
+
 // getUserById -> Verificar usuário
 export const getUserById = async(request, response)=>{
  const id = request.params.id
@@ -202,16 +203,69 @@ export const getUserById = async(request, response)=>{
  })
 
 }
+
 //editedUser -> controlador protegido, contem imagen
 export const editUser = async (request, response)=>{
  const { id } = request.params
 
  try {
   const token = getToken(request)
+  // console.log(token)
   const user = await getUserByToken(token)
-  console.log(user)
+  // console.log(user)
+
+  const { nome, email, telefone } = request.body
+  let imagem = user.imagem
+  if (request.file) {
+   imagem = request.file.filename
+  }
+
+  if (!nome) {
+   return response.status(400).json({message: "o nome é obrigatório"})
+  }
+  if (!email) {
+   return response.status(400).json({message: "o email é obrigatório"})
+  }
+  if (!telefone) {
+   return response.status(400).json({message: "o telefone é obrigatório"})
+  }
+
+  //1º verificar se o usuario existe
+   const checkSql = /*sql*/`SELECT * FROM usuarios WHERE ?? = ?`
+   const checkSqlData = ["usuario_id", id]
+   conn.query(checkSql, checkSqlData, (err, data)=>{
+    if (err) {
+     return response.status(500).json( 'Erro ao verificar usuário para Update')
+    }
+    if (data.length === 0) {
+     return response.status(404).json('Usuário não encontrado')
+    }
+
+  //2º evitar usuarios com email iguais
+  const checkEmailSql = /*sql*/`SELECT * FROM usuarios WHERE ?? = ? AND ?? = ?`
+  const checkEmailSqlData = ['email', email, 'usuario_id', id]
+  conn.query(checkEmailSql, checkEmailSqlData, (err, data)=>{
+   if (err) {
+    return response.status(500).json('Erro ao verificar email')
+   }
+   if (data.length > 0) {
+    return response.status(409).json('E-mail ejá está em uso')
+   }
+
+  // 3º atualizar o usuario 
+  const updateSql = /*sql*/`UPDATE usuarios SET ? WHERE ?? = ?`
+  const updateSqlData = [{ nome, email, telefone, imagem}, "usuario_id", id]
+  conn.query(updateSql, updateSqlData, (err)=>{
+   if (err) {
+    return response.status(500).json({message: 'Erro ao atulizar usuário'})
+   }
+   response.status(200).json({messga:'Usuário atualizado'})
+  })
+ })
+})
 
  } catch (error) {
-  
+  console.error(error)
+  response.status(500).json({message: 'Erro interno do servidor'})
  }
 } 
