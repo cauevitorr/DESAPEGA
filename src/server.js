@@ -10,14 +10,12 @@ import conn from "./config/conn.js"
 
 //importar os modulos
 import "./models/usuarioModel.js"
-import "./models/produtoModel.js"
 import "./models/objetoModel.js"
 import "./models/objetoImagensModel.js"
 //
 
 // importar as rotas
 import usuarioRouter from "./routes/usuarioRouter.js"
-import produtoRouter from "./routes/produtoRouter.js"
 import objetoRouter from "./routes/objetoRouter.js"
 //
 
@@ -42,8 +40,7 @@ app.use("../public", express.static(path.join(__dirname, "public")))
 
 //utilizar rotas
 app.use("/usuarios", usuarioRouter)
-app.use("/produtos", produtoRouter)
-app.use("/objetoImages", objetoRouter)
+app.use("/objeto", objetoRouter)
 
 app.use("*", (request, response) => {
  response.status(404).json({message:"Rota não encontrada"})

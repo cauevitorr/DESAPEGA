@@ -10,7 +10,7 @@ export const create = async (request, response)=>{
 const {nome, categoria, peso, cor, descrição, preco} = request.body
 const disponivel = 1
 
-//buscar o tolçken do usuario
+//buscar o tolcken do usuario
 const tolken = getToken(request)
 const usuario = await getUserByToken(tolken)
 
@@ -67,4 +67,45 @@ conn.query(objetoSql, objetoData, (err)=>{
 })
 
  response.status(200).json("Chegou aqui")
+}
+
+//listar todos os objetos de um usuario
+export const getAllObjectUser = async (request, response) =>{
+ try {
+  const tolken = getToken(request)
+  const usuario =  await getUserByToken(tolken)
+
+  const usuarioId = usuario.usuario_id
+  const selectSql = /*sql*/`
+  SELECT 
+  obj.objeto_id,
+  obj.usuario_id,
+  obj.nome,
+  obj.categoria,
+  obj.peso,
+  obj.descricao,
+  obj.disponivel,
+  obj.preco,
+  GROUP_CONCAT(obj_img.image_path SEPARATOR ',') AS image_paths
+  FROM 
+  objetos AS obj
+  LEFT JOIN
+  objeto_images AS obj_img ON obj.objeto_id = obj_img.objeto_id
+  WHERE 
+  obj.usuario_id = ?
+  GROUP BY
+  obj.objeto_id, obj.usuario_id, obj.nome, obj.categoria, obj.descricao, obj.preco
+  `
+conn.query(selectSql, [usuarioId], (err, data)=>{
+ if (err) {
+  console.error(err)
+  response.status(500).json({message: "Erro ao buscar os dados"})
+  return
+ }
+ response.status(200).json(data)
+})
+
+ } catch (error) {
+  
+ }
 }
